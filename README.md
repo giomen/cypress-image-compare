@@ -1,2 +1,2 @@
-# cypress-image-compare
+# cypress-screenshot-compare
 Image comparison for Cypress

@@ -1,0 +1,8 @@
+.DS_Store
+npm-debug.log
+.idea
+
+node_modules/
+dist/
+docker/cypress/snapshots/*
+!docker/cypress/snapshots/.gitkeep
