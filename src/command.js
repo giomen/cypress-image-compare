@@ -16,7 +16,7 @@ function getErrorThreshold(defaultScreenshotOptions, params) {
     return params.errorThreshold;
   }
 
-  return getValueOrDefault(defaultScreenshotOptions === null || defaultScreenshotOptions === void 0 ? void 0 : defaultScreenshotOptions.errorThreshold, 0);
+  return getValueOrDefault(defaultScreenshotOptions == null ? undefined : defaultScreenshotOptions.errorThreshold, 0);
 }
 
 function getSpecRelativePath() {
@@ -44,13 +44,6 @@ async function takeScreenshot(subject, name, screenshotOptions) {
   });
 }
 
-function moveScreenshotToBase(name) {
-  cy.task('moveSnapshotToBase', {
-    name,
-    specDirectory: getSpecRelativePath(),
-    snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
-  });
-}
 function updateScreenshot(name) {
   cy.task('updateSnapshot', {
     name,

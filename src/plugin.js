@@ -25,10 +25,9 @@ const {
 
 let CYPRESS_SCREENSHOT_DIR;
 
-function setupScreenshotPath(config) {
+function setupScreenshotPath() {
   // use cypress default path as fallback
   CYPRESS_SCREENSHOT_DIR = 'cypress/smokes/actual'
-  //CYPRESS_SCREENSHOT_DIR = getValueOrDefault(config === null || config === void 0 ? void 0 : config.screenshotsFolder, 'cypress/smokes/actual');
 }
 /** Move the generated snapshot .png file to its new path.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
@@ -40,7 +39,6 @@ async function moveSnapshot(args) {
     specDirectory,
     fileName
   } = args;
-  //const dir = path.join(process.cwd(), 'cypress', 'smokes', 'actual')
   const destDir = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory);
   const destFile = path.join(destDir, fileName);
   return createFolder(destDir, false).then(() => fsp.rename(fromPath, destFile)).then(() => null);
@@ -69,7 +67,6 @@ async function moveSnapshotToBase(args) {
     await fsp.copyFile(`${fromPathFile}.png`, `${destFile}.png`);
     return true;
   } catch (err) {
-    console.error(err);
     return false;
   }
   // return createFolder(destDir, false).then(() => fsp.rename(CYPRESS_SCREENSHOT_DIR, destFile)).then(() => null);
@@ -104,7 +101,6 @@ async function isSnapshotPresent(args) {
     snapshotBaseDirectory
   } = args;
 
-  //const snapshotBaseDirectory = getValueOrDefault(baseDir, path.join(process.cwd(), 'cypress', 'smokes', 'base'));
   const fileName = sanitize(name);
   const image = path.join(snapshotBaseDirectory, specDirectory, `${fileName}.png`)
   const existImage = await fs.existsSync(image)
@@ -113,15 +109,12 @@ async function isSnapshotPresent(args) {
     if (!existImage) {
       await moveSnapshotToBase({ name, specDirectory, snapshotBaseDirectory })
       return false
-    } else {
-      return true
     }
   } catch {
-    return
+    throw new Error('Error in existing image check')
   }
-
+  return true
 }
-
 
 async function compareSnapshotsPlugin(args) {
   const snapshotBaseDirectory = getValueOrDefault(args.baseDir, path.join(process.cwd(), 'cypress', 'smokes', 'base'));
