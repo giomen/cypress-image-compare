@@ -6,25 +6,20 @@ const {
 
 /** Return the errorThreshold from the options settings */
 
-
 function getErrorThreshold(defaultScreenshotOptions, params) {
   if (typeof params === 'number') {
     return params;
   }
-
   if (typeof params === 'object' && params.errorThreshold) {
     return params.errorThreshold;
   }
-
-  return getValueOrDefault(defaultScreenshotOptions == null ? undefined : defaultScreenshotOptions.errorThreshold, 0);
+  return getValueOrDefault(defaultScreenshotOptions === null || defaultScreenshotOptions === void 0 ? void 0 : defaultScreenshotOptions.errorThreshold, 0);
 }
-
 function getSpecRelativePath() {
   const integrationFolder = getValueOrDefault(Cypress.env('INTEGRATION_FOLDER'), 'cypress/e2e');
   return Cypress.spec.relative.replace(integrationFolder, '');
 }
 /** Take a screenshot and move screenshot to base or actual folder */
-
 
 async function takeScreenshot(subject, name, screenshotOptions) {
   let screenshotPath;
@@ -32,8 +27,8 @@ async function takeScreenshot(subject, name, screenshotOptions) {
   function onAfterScreenshot(_doc, props) {
     screenshotPath = props.path;
   }
-
-  objToOperateOn.screenshot(name, { ...screenshotOptions,
+  objToOperateOn.screenshot(name, {
+    ...screenshotOptions,
     onAfterScreenshot
   }).then(() => {
     cy.task('moveSnapshot', {
@@ -43,7 +38,6 @@ async function takeScreenshot(subject, name, screenshotOptions) {
     });
   });
 }
-
 function updateScreenshot(name) {
   cy.task('updateSnapshot', {
     name,
@@ -60,8 +54,6 @@ function isScreenshotPresent(name) {
     snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
   });
 }
-
-
 function compareScreenshots(name, errorThreshold) {
   const options = {
     fileName: name,
@@ -80,36 +72,31 @@ function compareScreenshots(name, errorThreshold) {
 }
 /** Add custom cypress command to compare image snapshots of an element or the window. */
 
-
 function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add('compareSnapshot', {
     prevSubject: 'optional'
   }, (subject, name, params = {}) => {
     const type = Cypress.env('type');
-    const screenshotOptions = typeof params === 'object' ? { ...defaultScreenshotOptions,
+    const screenshotOptions = typeof params === 'object' ? {
+      ...defaultScreenshotOptions,
       ...params
-    } : { ...defaultScreenshotOptions
+    } : {
+      ...defaultScreenshotOptions
     };
     takeScreenshot(subject, name, screenshotOptions);
-
-    const isScreenPresent = isScreenshotPresent(name)
+    //const isScreenPresent = isScreenshotPresent(name);
     switch (type) {
       case 'actual':
-        if (isScreenPresent) {
-          compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
-        }
+        compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
         break;
-
       case 'base':
         updateScreenshot(name);
         break;
-
       default:
         throw new Error(`The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`);
     }
   });
 }
 /* eslint-enable no-undef */
-
 
 module.exports = compareSnapshotCommand;

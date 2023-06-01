@@ -1,37 +1,27 @@
 const fs = require('fs');
-
 const fsp = require('fs/promises');
-
 const path = require('path');
-
 const {
   PNG
 } = require('pngjs');
-
 const pixelmatch = require('pixelmatch');
-
 const sanitize = require('sanitize-filename');
-
 const {
   adjustCanvas,
   createFolder,
   parseImage,
   errorSerialize
 } = require('./utils');
-
 const {
   getValueOrDefault
 } = require('./utils-browser');
-
 let CYPRESS_SCREENSHOT_DIR;
-
 function setupScreenshotPath() {
   // use cypress default path as fallback
-  CYPRESS_SCREENSHOT_DIR = 'cypress/smokes/actual'
+  CYPRESS_SCREENSHOT_DIR = 'cypress/smokes/actual';
 }
 /** Move the generated snapshot .png file to its new path.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-
 
 async function moveSnapshot(args) {
   const {
@@ -52,18 +42,18 @@ async function moveSnapshotToBase(args) {
     specDirectory,
     snapshotBaseDirectory
   } = args;
-
   const destDir = path.join(snapshotBaseDirectory, specDirectory);
   const destFile = path.join(destDir, name);
-
-  fs.mkdirSync(destDir, { recursive: true });
-
+  fs.mkdirSync(destDir, {
+    recursive: true
+  });
   const fromPath = path.join(CYPRESS_SCREENSHOT_DIR, specDirectory);
   const fromPathFile = path.join(fromPath, name);
-
   try {
     // create the destination directory if it doesn't exist
-    fs.mkdirSync(destDir, { recursive: true });
+    fs.mkdirSync(destDir, {
+      recursive: true
+    });
     await fsp.copyFile(`${fromPathFile}.png`, `${destFile}.png`);
     return true;
   } catch (err) {
@@ -73,7 +63,6 @@ async function moveSnapshotToBase(args) {
 }
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
-
 
 async function updateSnapshot(args) {
   const {
@@ -100,23 +89,28 @@ async function isSnapshotPresent(args) {
     specDirectory,
     snapshotBaseDirectory
   } = args;
-
   const fileName = sanitize(name);
-  const image = path.join(snapshotBaseDirectory, specDirectory, `${fileName}.png`)
-  const existImage = await fs.existsSync(image)
+  const image = path.join(snapshotBaseDirectory, specDirectory, `${fileName}.png`);
+  const existImage = await fs.existsSync(image);
 
-  try {
-    if (!existImage) {
-      await moveSnapshotToBase({ name, specDirectory, snapshotBaseDirectory })
-      return false
-    }
-  } catch {
-    throw new Error('Error in existing image check')
+  if (!existImage) {
+    await moveSnapshotToBase({
+      name,
+      specDirectory,
+      snapshotBaseDirectory
+    });
+    return false
+  } else {
+    return true
   }
-  return true
 }
-
 async function compareSnapshotsPlugin(args) {
+  const existImage = await isSnapshotPresent({
+    name: args.fileName,
+    specDirectory: args.specDirectory,
+    snapshotBaseDirectory: args.baseDir
+  })
+  if (!existImage) {return }
   const snapshotBaseDirectory = getValueOrDefault(args.baseDir, path.join(process.cwd(), 'cypress', 'smokes', 'base'));
   const snapshotDiffDirectory = getValueOrDefault(args.diffDir, path.join(process.cwd(), 'cypress', 'smokes', 'diff'));
   const alwaysGenerateDiff = !(args.keepDiff === false);
@@ -129,7 +123,6 @@ async function compareSnapshotsPlugin(args) {
   };
   let mismatchedPixels = 0;
   let percentage = 0;
-
   try {
     await createFolder(snapshotDiffDirectory, args.failSilently);
     const imgExpected = await parseImage(options.expectedImage);
@@ -144,7 +137,6 @@ async function compareSnapshotsPlugin(args) {
       threshold: 0.1
     });
     percentage = (mismatchedPixels / diff.width / diff.height) ** 0.5;
-
     if (percentage > args.errorThreshold) {
       const specFolder = path.join(snapshotDiffDirectory, args.specDirectory);
       await createFolder(specFolder, args.failSilently);
@@ -160,7 +152,6 @@ async function compareSnapshotsPlugin(args) {
       error: errorSerialize(error)
     };
   }
-
   return {
     mismatchedPixels,
     percentage
@@ -168,7 +159,6 @@ async function compareSnapshotsPlugin(args) {
 }
 /** Install plugin to compare snapshots.
  * (Also installs an internally used plugin to move snapshot files). */
-
 
 function getCompareSnapshotsPlugin(on, config) {
   setupScreenshotPath(config);
@@ -180,5 +170,4 @@ function getCompareSnapshotsPlugin(on, config) {
     isSnapshotPresent
   });
 }
-
 module.exports = getCompareSnapshotsPlugin;
