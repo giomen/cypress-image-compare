@@ -1,6 +1,6 @@
 {
   "name": "cypress-screenshot-compare",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Module for adding visual regression testing to Cypress",
   "repository": "https://github.com/cypress-screenshot-compare/cypress-screenshot-compare",
   "author": "Giovanni Meogrossi <gionnigrossi@gmail.com>",
