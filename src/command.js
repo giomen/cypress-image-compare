@@ -47,13 +47,6 @@ function updateScreenshot(name) {
   });
 }
 /** Call the plugin to compare snapshot images and generate a diff */
-function isScreenshotPresent(name) {
-  cy.task('isSnapshotPresent', {
-    name,
-    specDirectory: getSpecRelativePath(),
-    snapshotBaseDirectory: Cypress.env('SNAPSHOT_BASE_DIRECTORY')
-  });
-}
 function compareScreenshots(name, errorThreshold) {
   const options = {
     fileName: name,
@@ -76,7 +69,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add('compareSnapshot', {
     prevSubject: 'optional'
   }, (subject, name, params = {}) => {
-    const type = Cypress.env('type');
+    const type = Cypress.env('screenshotEvalType') ?? 'update';
     const screenshotOptions = typeof params === 'object' ? {
       ...defaultScreenshotOptions,
       ...params
@@ -84,16 +77,15 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
       ...defaultScreenshotOptions
     };
     takeScreenshot(subject, name, screenshotOptions);
-    //const isScreenPresent = isScreenshotPresent(name);
     switch (type) {
-      case 'actual':
+      case 'compare':
         compareScreenshots(name, getErrorThreshold(defaultScreenshotOptions, params));
         break;
-      case 'base':
+      case 'update':
         updateScreenshot(name);
         break;
       default:
-        throw new Error(`The "type" environment variable is unknown. \nExpected: "actual" or "base" \nActual: ${type}`);
+        throw new Error(`The "type" environment variable is unknown. \nExpected: "compare" or "update" \nActual: ${type}`);
     }
   });
 }

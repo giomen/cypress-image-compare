@@ -59,7 +59,6 @@ async function moveSnapshotToBase(args) {
   } catch (err) {
     return false;
   }
-  // return createFolder(destDir, false).then(() => fsp.rename(CYPRESS_SCREENSHOT_DIR, destFile)).then(() => null);
 }
 /** Update the base snapshot .png by copying the generated snapshot to the base snapshot directory.
  * The target path is constructed from parts at runtime in node to be OS independent.  */
@@ -91,7 +90,7 @@ async function isSnapshotPresent(args) {
   } = args;
   const fileName = sanitize(name);
   const image = path.join(snapshotBaseDirectory, specDirectory, `${fileName}.png`);
-  const existImage = await fs.existsSync(image);
+  const existImage = fs.existsSync(image);
 
   if (!existImage) {
     await moveSnapshotToBase({
