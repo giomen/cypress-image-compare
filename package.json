@@ -22,7 +22,8 @@
     "ci": "export SNAPSHOT_DIRECTORY=cypress/snapshots && npm run build && npm run base && npm test",
     "prettier:check": "prettier --check --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
     "prettier:fix": "prettier --write --trailing-comma es5 --single-quote --arrow-parens always \"src/**/*.js\"",
-    "jest": "jest tests"
+    "jest": "jest tests",
+    "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.10",

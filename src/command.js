@@ -69,7 +69,7 @@ function compareSnapshotCommand(defaultScreenshotOptions) {
   Cypress.Commands.add('compareSnapshot', {
     prevSubject: 'optional'
   }, (subject, name, params = {}) => {
-    const type = Cypress.env('screenshotEvalType') ?? 'update';
+    const type = Cypress.env('screenshotEvalType') != null ? Cypress.env('screenshotEvalType') : 'update';
     const screenshotOptions = typeof params === 'object' ? {
       ...defaultScreenshotOptions,
       ...params
