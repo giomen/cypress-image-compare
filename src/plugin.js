@@ -109,7 +109,7 @@ async function compareSnapshotsPlugin(args) {
     specDirectory: args.specDirectory,
     snapshotBaseDirectory: args.baseDir
   })
-  if (!existImage) {return }
+  if (!existImage) {return false}
   const snapshotBaseDirectory = getValueOrDefault(args.baseDir, path.join(process.cwd(), 'cypress', 'smokes', 'base'));
   const snapshotDiffDirectory = getValueOrDefault(args.diffDir, path.join(process.cwd(), 'cypress', 'smokes', 'diff'));
   const alwaysGenerateDiff = !(args.keepDiff === false);
