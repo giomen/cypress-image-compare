@@ -2,11 +2,16 @@
   "name": "cypress-screenshot-compare",
   "version": "2.0.2",
   "description": "Module for adding visual regression testing to Cypress",
-  "repository": "https://github.com/giomen/cypress-screenshot-compare",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/giomen/cypress-screenshot-compare"
+  },
   "author": "Giovanni Meogrossi <gionnigrossi@gmail.com>",
   "license": "MIT",
   "keywords": [
     "visual regression",
+    "screenshot diff",
+    "screenshot compare",
     "image diff",
     "image compare",
     "cypress"
