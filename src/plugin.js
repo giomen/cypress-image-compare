@@ -12,9 +12,8 @@ const {
   parseImage,
   errorSerialize
 } = require('./utils');
-const {
-  getValueOrDefault
-} = require('./utils-browser');
+const {getValueOrDefault} = require('./utils-browser');
+
 let CYPRESS_SCREENSHOT_DIR;
 function setupScreenshotPath() {
   // use cypress default path as fallback
@@ -99,9 +98,9 @@ async function isSnapshotPresent(args) {
       snapshotBaseDirectory
     });
     return false
-  } else {
-    return true
   }
+
+  return true
 }
 async function compareSnapshotsPlugin(args) {
   const existImage = await isSnapshotPresent({

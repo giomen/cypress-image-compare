@@ -13,7 +13,7 @@ function getErrorThreshold(defaultScreenshotOptions, params) {
   if (typeof params === 'object' && params.errorThreshold) {
     return params.errorThreshold;
   }
-  return getValueOrDefault(defaultScreenshotOptions === null || defaultScreenshotOptions === void 0 ? void 0 : defaultScreenshotOptions.errorThreshold, 0);
+  return getValueOrDefault(defaultScreenshotOptions == null ? null : defaultScreenshotOptions.errorThreshold, 0);
 }
 function getSpecRelativePath() {
   const integrationFolder = getValueOrDefault(Cypress.env('INTEGRATION_FOLDER'), 'cypress/e2e');
